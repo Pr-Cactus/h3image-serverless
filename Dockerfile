@@ -19,6 +19,9 @@ RUN ln -sfn /ComfyUI /comfyui
 # start.sh lance ComfyUI puis le handler ; network_volume.py déclare les
 # chemins du volume réseau.
 COPY handler.py network_volume.py start.sh extra_model_paths.yaml requirements.txt ./
+# Le bit exécutable peut se perdre en route (il l'a fait) : on le remet ici,
+# sans dépendre de ce que le dépôt transporte.
+RUN chmod +x /start.sh
 RUN pip install --no-cache-dir -r requirements.txt
 
 # On REMPLACE le CMD du template (/start_script.sh, un script de pod qui
