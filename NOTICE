@@ -1,0 +1,9 @@
+Ce dépôt contient du code repris de runpod-workers/worker-comfyui :
+
+  handler.py, start.sh, network_volume.py, extra_model_paths.yaml
+
+Copyright (c) RunPod, sous licence Apache 2.0 — voir LICENSE-worker-comfyui.
+Le reste (Dockerfile, README) est propre à ce projet.
+
+L'image de base est hearmeman/comfyui-minimax-template:v13.
+Les poids de MiniMax H3 Image relèvent de la licence MiniMax H3 Community.
