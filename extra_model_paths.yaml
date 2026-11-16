@@ -1,12 +1,44 @@
-runpod_worker_comfy:
-  base_path: /runpod-volume
+# Chemins des modèles pour le worker serverless.
+#
+# ComfyUI ne charge CE fichier que depuis son propre dossier : d'où le
+# `COPY extra_model_paths.yaml /comfyui/extra_model_paths.yaml` du Dockerfile.
+#
+# Arborescence relevée dans les journaux du provisionneur du template de pod :
+#     /workspace/ComfyUI/models/diffusion_models/minimax_h3_image_pruned_int8_convrot.safetensors
+#     /workspace/ComfyUI/models/vae/minimax_h3_image_vae_fp16.safetensors
+#     /workspace/ComfyUI/models/text_encoders/qwen3vl_32b_minimax_h3_int8_convrot.safetensors
+#
+# Côté serverless, le volume est monté en /runpod-volume : les MEMES octets,
+# mais /workspace devient /runpod-volume. D'où le base_path ci-dessous.
+
+h3image_volume:
+  base_path: /runpod-volume/ComfyUI
   checkpoints: models/checkpoints/
-  clip: models/clip/
+  # L'encodeur de texte H3 Image vit dans text_encoders/ et se déclare en CLIP.
+  # On liste les deux noms de dossier pour rester compatible selon la version.
+  clip: models/text_encoders/
+  text_encoders: models/text_encoders/
   clip_vision: models/clip_vision/
   configs: models/configs/
   controlnet: models/controlnet/
+  # Le DiT H3 Image est dans diffusion_models/ ; `unet` est l'alias historique.
+  diffusion_models: models/diffusion_models/
+  unet: models/diffusion_models/
   embeddings: models/embeddings/
+  loras: models/loras/
+  model_patches: models/model_patches/
+  upscale_models: models/upscale_models/
+  vae: models/vae/
+
+# Repli : si les poids venaient un jour à être posés à plat sous
+# /runpod-volume/models. Un chemin qui n'existe pas ne coûte rien à scanner.
+h3image_flat:
+  base_path: /runpod-volume
+  checkpoints: models/checkpoints/
+  clip: models/clip/
+  text_encoders: models/text_encoders/
+  diffusion_models: models/diffusion_models/
+  unet: models/unet/
   loras: models/loras/
   upscale_models: models/upscale_models/
   vae: models/vae/
-  unet: models/unet/

@@ -18,10 +18,16 @@ RUN ln -sfn /ComfyUI /comfyui
 # Handler serverless officiel (runpod-workers/worker-comfyui, Apache-2.0).
 # start.sh lance ComfyUI puis le handler ; network_volume.py déclare les
 # chemins du volume réseau.
-COPY handler.py network_volume.py start.sh extra_model_paths.yaml requirements.txt ./
+COPY handler.py network_volume.py start.sh requirements.txt ./
 # Le bit exécutable peut se perdre en route (il l'a fait) : on le remet ici,
 # sans dépendre de ce que le dépôt transporte.
 RUN chmod +x /start.sh
+
+# CHEMIN EXPLICITE, volontairement : ComfyUI ne charge extra_model_paths.yaml
+# que depuis SON dossier. L'officiel fait `WORKDIR /comfyui` puis `ADD ./`, ce
+# qui dépend du WORKDIR de l'image de base — nous, on écrit le chemin en dur,
+# sinon le fichier peut atterrir à la racine et n'être jamais lu.
+COPY extra_model_paths.yaml /comfyui/extra_model_paths.yaml
 RUN pip install --no-cache-dir -r requirements.txt
 
 # On REMPLACE le CMD du template (/start_script.sh, un script de pod qui
